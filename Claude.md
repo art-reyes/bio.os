@@ -1,10 +1,3 @@
-It looks like Claude actually generated the complete file for you! Sometimes the web interface or the way the code block renders can make it look broken or cut off, but the full document is there.
-
-You will want to copy everything starting from the `# CLAUDE.md` title down to the `**Binding on:**` line at the very bottom. 
-
-To make it easy, I've pulled the exact, finalized markdown from your page. You can click the "Copy" button on the code block below and paste it directly into your `CLAUDE.md` file:
-
-```markdown
 # CLAUDE.md — bio.os Project Constitution
 
 > **STATUS: BINDING.**
@@ -381,3 +374,106 @@ Silent edits to `CLAUDE.md` by an agent are a P0 defect.
 **Owner:** bio.os founding engineer
 **Binding on:** all human and AI contributors
 ```
+
+8. ANTHROPIC CLAUDE - AGENTIC ECOSYSTEM & DETERMINISTIC CAPABILITIES (2026)
+1. Claude Code (Zero-Base Developer Workflows)
+What it is: An agentic coding system executing natively in the terminal. We operate this strictly in a deterministic, zero-base state.
+Execution Asceticism: Always initialize the environment using claude --bare --dangerously-skip-permissions. This strips out over 10,000 tokens of redundant sub-agent bloat and bypasses interactive permission loops, securing the absolute mathematical floor for token consumption.
+State & Memory Protocol: NEVER rely on native "auto-memory" or session continuation (--continue), as automatic compaction causes catastrophic Context Amnesia. Instead, bridge sessions deterministically by commanding the agent to generate a synchronous SITREP (agent-coordination.md) handoff document before terminating.
+2. Claude Cowork (Sandboxed Knowledge Workflows)
+What it is: An autonomous desktop application for non-technical background execution (Data, Strategy).
+Output Compression Mandate: When scheduling synthesis tasks (e.g., merging PDFs or generating reports), enforce strict output sandboxing. Instruct the agent to "Think in Code"—processing raw data in an isolated script and returning only the condensed, final output to the active window to prevent 98% context bloat.
+3. Agent Skills & Extensibility (The Funnel Architecture)
+What it is: Anthropic’s standard for domain-specific tool integration.
+Cache-Locked Invocations: Abandon "Progressive Disclosure." To maintain our 90% prompt-caching discount, we rely on strategic padding. When utilizing external Model Context Protocol (MCP) servers, manage them strictly via an .mcp-funnel.json file. This tree-shakes unused tool schemas from the prefix without dropping the context below the caching boundary.
+4. Multi-Agent Orchestration (Synchronous Teams)
+What it is: The deployment of parallel sub-agents to decompose massive infrastructure tasks.
+Orchestration Mandate: When commanding the Lead Orchestrator, explicitly forbid sub-agents from dumping raw execution logs back to the master process. Sub-agents must utilize deterministic database tracking or strict lexical handoff files to merge their final states cleanly, ensuring the Lead Orchestrator's context window remains uncorrupted.
+9. WORKSPACE ARCHITECTURE & EXECUTION SHIELDS
+The Index Map Mandate: The agent MUST NOT use generic ls or find commands to blindly explore the repository. All sessions must rely on a pre-generated, static CODEBASE_INDEX.md file. The agent will read this 500-token map once, locking it into the cache, and target specific files directly.
+The .claudeignore Shield: The agent is strictly forbidden from parsing lock files, build artifacts, or dependency trees. A ruthless .claudeignore file is deployed at the root level. To prevent the undocumented ~/.claude/file-history/ credential leakage, all .env, .pem, and *.key files are explicitly blacklisted from agent awareness.
+Hierarchical State Management: This document (bio_os_project_brain.md) represents the global, immutable architecture. Temporary workflows, editor quirks, and user-specific overrides MUST be siloed into a CLAUDE.local.md file. This prevents temporary tasks from corrupting the master cache hash.
+10. CORE PROMPT STANDARDS (EXECUTION ASCETICISM)
+Cache-Hash Stability: The first 1,024 tokens of any prompt/instruction set MUST remain completely static to guarantee the 90% Anthropic prefix-caching discount. Dynamic variables (timestamps, branch names, ephemeral task goals) must be injected strictly at the bottom of the prompt sequence, below the static boundary.
+Zero Conversational Friction: The agent must operate with absolute execution asceticism. Do not use filler text, pleasantries, or hedging. Because the environment is initialized with --dangerously-skip-permissions, the agent must execute its XML prompt requirements silently and stop.
+Strict XML Routing: All commands and data structures must be wrapped in explicit XML tags (e.g., <system_directive>, <error_handling>). This is not for formatting; this is to exploit Anthropic’s internal attention mechanisms, forcing the model to compartmentalize directives and preventing instruction bleed.
+11. ADVANCED AGENTIC STANDARDS (CONTEXT SANDBOXING)
+The "Think in Code" Paradigm: When interacting with large datasets, raw tool outputs, or logs, the agent MUST NOT dump the raw data into the active context window. The agent must generate a localized script to process the data programmatically (Sandboxing) and return only the highly condensed, final standard output.
+MCP Funneling: Model Context Protocol (MCP) servers must not be allowed to blanket-inject their entire schema into the prefix. Server tools must be strictly filtered via an .mcp-funnel.json file, exposing only the specific capabilities required for the immediate development phase.
+Synchronous State Handoffs: To defeat Context Amnesia without bloating the context window, the agent must never infinitely continue a session. Before terminating, the agent must distill its active state, modified files, and next steps into a strict 2-kilobyte agent-coordination.md (SITREP) file for lexical retrieval in the subsequent session.
+
+12. GLOBAL SCHEMA INVARIANTS (DATABASE & API CONTRACTS)
+To eliminate schema hallucination and enforce absolute boundary typing, the agent MUST reference these canonical definitions for all API and Database operations.
+12.1 Core PostgreSQL Schemas
+All tables enforce uuid_generate_v7() for time-orderable primary keys and strict timezone-aware timestamps.
+SQL
+-- USERS TABLE
+CREATE TABLE users (
+  id            uuid PRIMARY KEY DEFAULT uuid_generate_v7(),
+  email         text UNIQUE NOT NULL,
+  password_hash text NOT NULL,
+  role          text NOT NULL CHECK (role IN ('operator', 'clinician_read_only')),
+  created_at    timestamptz NOT NULL DEFAULT now(),
+  updated_at    timestamptz NOT NULL DEFAULT now()
+);
+
+-- LAB MARKERS TABLE (Requires LOINC Canonicalization)
+CREATE TABLE lab_markers (
+  id            uuid PRIMARY KEY DEFAULT uuid_generate_v7(),
+  user_id       uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  marker_key    text NOT NULL REFERENCES loinc_codes(loinc_num),
+  value_numeric numeric,
+  value_text    text,
+  unit_ucum     text NOT NULL,
+  observed_at   timestamptz NOT NULL,
+  source        text NOT NULL CHECK (source IN ('manual','quest','labcorp','dexa','imported_pdf')),
+  created_at    timestamptz NOT NULL DEFAULT now(),
+  updated_at    timestamptz NOT NULL DEFAULT now(),
+  CHECK (value_numeric IS NOT NULL OR value_text IS NOT NULL)
+);
+
+-- ENCRYPTED BIOMETRIC CONNECTIONS (AWS KMS Envelope)
+CREATE TABLE enc_biometric_connections (
+  id              uuid PRIMARY KEY DEFAULT uuid_generate_v7(),
+  user_id         uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  provider        text NOT NULL,
+  ciphertext      bytea NOT NULL,
+  iv              bytea NOT NULL,
+  auth_tag        bytea NOT NULL,
+  encrypted_dek   bytea NOT NULL,
+  kms_key_id      text NOT NULL,
+  kms_key_version text NOT NULL,
+  provider_user_fp bytea NOT NULL,
+  created_at      timestamptz NOT NULL DEFAULT now(),
+  rotated_at      timestamptz
+);
+
+
+12.2 Boundary Validation (Zod Contracts)
+All incoming API payloads MUST be sanitized through these canonical Zod schemas before interacting with the database controllers.
+TypeScript
+import { z } from 'zod';
+
+// Clinical-Grade Lab Marker Ingestion Schema
+export const CreateLabMarkerSchema = z.object({
+  user_id: z.string().uuid(),
+  marker_key: z.string().regex(/^\d+-\d+$/, "Must be a valid LOINC code"),
+  value_numeric: z.number().optional(),
+  value_text: z.string().optional(),
+  unit_ucum: z.string().min(1, "UCUM unit is required"),
+  observed_at: z.string().datetime({ offset: true }),
+  source: z.enum(['manual', 'quest', 'labcorp', 'dexa', 'imported_pdf'])
+}).refine(data => data.value_numeric !== undefined || data.value_text !== undefined, {
+  message: "Either value_numeric or value_text must be provided"
+});
+
+// Secure Biometric Connection Payload Schema
+export const BiometricConnectionPayloadSchema = z.object({
+  user_id: z.string().uuid(),
+  provider: z.string().min(2),
+  raw_token_payload: z.string().min(10, "Payload must contain token data before KMS encryption")
+});
+
+
+
+
