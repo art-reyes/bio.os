@@ -327,6 +327,14 @@ Without explicit human approval, the agent **SHALL NOT**:
 - If a request conflicts with this document: surface the specific clause and ask for an override. Do not silently bend the rule.
 - If a generated artifact would violate INV-1 through INV-7: refuse and explain. These are floor constraints, not preferences.
 
+### 5.9 Token Conservation & Interface Guardrails (CRITICAL)
+As an autonomous CLI agent, you operate under strict usage limits. You MUST obey these guardrails:
+- **Error Handling (NO LOOPING):** If you encounter a terminal error, `403 Permission Denied`, API failure, or empty repo state, **DO NOT** attempt to autonomously engineer a workaround. Stop execution immediately and wait for human instruction.
+- **Progressive Disclosure:** Do not read the entire repository. Restrict file reads exclusively to the directories required for the immediate task.
+- **GitHub Authentication:** Never rely on default OAuth web popups. If a push fails due to auth, stop and ask the user for a Personal Access Token (PAT) to set as `GITHUB_TOKEN`.
+- **Diff Review Navigation:** If you enter the local "Diff Review" or "Accept Edits" UI state, do not wait for text prompts. Append a note instructing the user: "Press Enter to accept or Esc to cancel."
+- **Local Commits:** Unless explicitly commanded to push to a remote branch, simply commit your work locally and stop.
+
 ---
 
 ## 6. Repository Map (Authoritative)
